@@ -1,0 +1,54 @@
+services:
+  # Broker de streaming Redpanda (Kafka API en puerto 9092)
+  redpanda:
+    image: docker.redpanda.com/redpandadata/redpanda:v23.3.10
+    container_name: agropulse-redpanda
+    command:
+      - redpanda start
+      - --smp 1
+      - --memory 512M
+      - --overprovisioned
+      - --kafka-addr PLAINTEXT://0.0.0.0:29092,OUTSIDE://0.0.0.0:9092
+      - --advertise-kafka-addr PLAINTEXT://redpanda:29092,OUTSIDE://localhost:9092
+    ports:
+      - "9092:9092"
+    volumes:
+      - redpanda-data:/var/lib/redpanda/data
+    healthcheck:
+      test: ["CMD-SHELL", "rpk cluster health | grep -E 'Healthy:.+true'"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Worker simulador de sensores IoT y ejecutor de comandos hacia Supabase
+  worker:
+    build:
+      context: ./worker
+      dockerfile: Dockerfile
+    container_name: agropulse-worker
+    restart: unless-stopped
+    depends_on:
+      redpanda:
+        condition: service_healthy
+    env_file:
+      - ../.env
+    environment:
+      - KAFKA_BROKERS=redpanda:29092
+      - WORKER_MODE=consumer
+      - COMMAND_FAILURE_RATE=${COMMAND_FAILURE_RATE:-0}
+
+  simulator:
+    build: ./worker
+    restart: unless-stopped
+    depends_on:
+      redpanda:
+        condition: service_healthy
+    env_file:
+      - ../.env
+    environment:
+      - KAFKA_BROKERS=redpanda:29092
+      - WORKER_MODE=simulator
+      - DISABLED_STATIONS=${DISABLED_STATIONS:-}
+
+volumes:
+  redpanda-data:

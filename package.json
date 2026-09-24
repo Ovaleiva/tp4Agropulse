@@ -1,0 +1,1 @@
+{"name":"agropulse-validation","private":true,"scripts":{"test":"node --test tests/backend.test.cjs"},"devDependencies":{"@electric-sql/pglite":"^0.3.14"}}

@@ -1,0 +1,23 @@
+# Dependencias
+node_modules/
+
+# Expo y Metro Bundler
+.expo/
+dist/
+web-build/
+
+# Variables de entorno secretas (Seguridad RNF-02)
+.env
+.env.*
+!.env.example
+
+# Logs del sistema
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# SO y herramientas
+.DS_Store
+Thumbs.db
+.npm-cache/
+artifacts/

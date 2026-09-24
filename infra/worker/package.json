@@ -1,0 +1,16 @@
+{
+  "name": "agropulse-worker",
+  "version": "1.0.0",
+  "description": "Simulador IoT y consumer hacia Supabase para AgroPulse",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "setup-users": "node setup-users.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.1",
+    "dotenv": "^16.4.7",
+    "kafkajs": "^2.2.4",
+    "ws": "^8.18.0"
+  }
+}
